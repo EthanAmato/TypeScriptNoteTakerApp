@@ -1,5 +1,5 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { Container } from 'react-bootstrap';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { NewNote } from './components/NewNote';
@@ -10,6 +10,11 @@ import { NoteLayout } from './components/NoteLayout';
 import { Note } from './components/Note';
 import { EditNote } from './components/EditNote';
 import { Login } from './components/Login';
+import { Register } from './components/Register';
+import { useAuthState } from 'react-firebase-hooks/auth';
+import { auth  } from "./firebase";
+import { Navbar } from './components/Navbar';
+
 
 export type Note = {
   id: string,
@@ -40,6 +45,8 @@ export type Tag = {
 function App() {
   const [notes, setNotes] = useLocalStorage<RawNote[]>("NOTES", [])
   const [tags, setTags] = useLocalStorage<Tag[]>("TAGS", [])
+ 
+  
 
   const notesWithTags = useMemo(() => {
     return notes.map(note => { //loop through all my notes
@@ -115,10 +122,13 @@ function App() {
   }
 
   return (
+    <>
+    <Navbar/>
     <Container className="my-4">
       <Routes>
         <Route path="/" element={<NoteList updateTag={updateTag} deleteTag={deleteTag} availableTags={tags} notes={notesWithTags}/>}></Route>
         <Route path="/login" element={<Login/>}/>
+        <Route path="/register" element={<Register/>}/>
         <Route path="/new" element={<NewNote onSubmit={onCreateNote} onAddTag={addTag} availableTags={tags}/>}></Route>
         <Route path="/:id" element={<NoteLayout notes={notesWithTags}/>}>
           <Route index element={<Note onDeleteNote={onDeleteNote}/>} />
@@ -127,6 +137,7 @@ function App() {
         <Route path="*" element={<Navigate to="/"></Navigate>}></Route>
       </Routes >
     </Container>
+    </>
   )
 }
 

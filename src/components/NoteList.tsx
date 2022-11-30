@@ -53,6 +53,9 @@ export function NoteList({ availableTags, notes, deleteTag, updateTag }: NoteLis
                 {/* xs (extra small) - push everything to right hand side by letting Notes column take up rest of space*/}
                 <Col xs="auto">
                     <Stack gap={2} direction="horizontal">
+                        <Link to="/login">
+                            <Button variant="primary">Login</Button>
+                        </Link>
                         <Link to="/new">
                             <Button variant="primary">Create</Button>
                         </Link>
