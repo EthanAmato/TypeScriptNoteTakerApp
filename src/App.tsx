@@ -5,6 +5,11 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { NewNote } from './components/NewNote';
 import { useLocalStorage } from './hooks/useLocalStorage';
 import { v4 as uuidV4 } from "uuid";
+import { NoteList } from './components/NoteList';
+import { NoteLayout } from './components/NoteLayout';
+import { Note } from './components/Note';
+import { EditNote } from './components/EditNote';
+import { Login } from './components/Login';
 
 export type Note = {
   id: string,
@@ -57,18 +62,67 @@ function App() {
     });
   };
 
+  function onUpdateNote(id:string, {tags, ...data}:NoteData) {
+    setNotes((prevNotes) => {
+      //set notes to all prev notes with an additional note that consists of:
+      //1. data, which consists of the note Title and note Body
+      //2. A string-based, unique ID
+      //3. tagIds, an array of Ids associated with user-assigned tags. This method of storage allows for
+      //easier post-hoc relabeling and deletion propagation
+      return prevNotes.map(note => {
+        if (note.id === id) {
+          //replace edited note with the new info
+          return {...note, ...data, tagIds: tags.map(tag => tag.id) }
+        } else {
+          return note;
+        }
+      })
+    });
+  }
+
+  function onDeleteNote(id:string) {
+    setNotes(prevNotes => {
+      return prevNotes.filter(note => note.id!==id);
+    })
+  }
+
   function addTag(newTag: Tag) {
     setTags(prev => [...tags,newTag]);
+  }
+
+  function updateTag(id: string, label:string) {
+    setTags((prevTags) => {
+      //set notes to all prev notes with an additional note that consists of:
+      //1. data, which consists of the note Title and note Body
+      //2. A string-based, unique ID
+      //3. tagIds, an array of Ids associated with user-assigned tags. This method of storage allows for
+      //easier post-hoc relabeling and deletion propagation
+      return prevTags.map(tag => {
+        if (tag.id === id) {
+          //replace edited note with the new info
+          return {...tag, label }
+        } else {
+          return tag;
+        }
+      })
+    });
+  }
+
+  function deleteTag(id:string) {
+    setTags(prevTags => {
+      return prevTags.filter(tag => tag.id !== id);
+    })
   }
 
   return (
     <Container className="my-4">
       <Routes>
-        <Route path="/" element={<div>Home</div>}></Route>
+        <Route path="/" element={<NoteList updateTag={updateTag} deleteTag={deleteTag} availableTags={tags} notes={notesWithTags}/>}></Route>
+        <Route path="/login" element={<Login/>}/>
         <Route path="/new" element={<NewNote onSubmit={onCreateNote} onAddTag={addTag} availableTags={tags}/>}></Route>
-        <Route path="/:id">
-          <Route index element={<h1>Show</h1>} />
-          <Route path="edit" element={<h1>Edit</h1>} />
+        <Route path="/:id" element={<NoteLayout notes={notesWithTags}/>}>
+          <Route index element={<Note onDeleteNote={onDeleteNote}/>} />
+          <Route path="edit" element={<EditNote onSubmit={onUpdateNote} onAddTag={addTag} availableTags={tags}/>} />
         </Route>
         <Route path="*" element={<Navigate to="/"></Navigate>}></Route>
       </Routes >

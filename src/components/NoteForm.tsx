@@ -1,7 +1,7 @@
 import { Form, Stack, Row, Col, Button } from 'react-bootstrap';
 import CreatableReactSelect from "react-select/creatable"; //a combination of a textarea and select element
                                                            //used for adding new / existing tags to document
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import { FormEvent, useRef, useState } from 'react';
 import { Note, NoteData, Tag } from '../App';
 import { v4 as uuidV4 } from "uuid";
@@ -10,14 +10,16 @@ type NoteFormProps = {
     onSubmit: (data: NoteData) => void //onSubmit function takes data in form of NoteData and return void
     onAddTag: (newTag:Tag) => void
     availableTags: Tag[]
-}
+} & Partial<NoteData> //says that all properties of NoteData are optional
 
-export function NoteForm({onSubmit, onAddTag, availableTags}:NoteFormProps) {
+export function NoteForm({onSubmit, onAddTag, availableTags,
+                            title="",body="",tags=[]}:NoteFormProps) {
 
     const titleRef = useRef<HTMLInputElement>(null);
     const bodyMarkdownRef = useRef<HTMLTextAreaElement>(null); //I believe this is TS for indicating the type of element for    
                                                                //each ref
-    const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
+    const [selectedTags, setSelectedTags] = useState<Tag[]>(tags); //by default set tags to the tags passed as param
+    const navigate = useNavigate()
 
 
     function handleSubmit(e: FormEvent) {
@@ -31,6 +33,7 @@ export function NoteForm({onSubmit, onAddTag, availableTags}:NoteFormProps) {
                                                   //in the form
             tags: selectedTags
         })
+        navigate(".."); //navigate to previous page
     }
 
     return (
@@ -41,7 +44,7 @@ export function NoteForm({onSubmit, onAddTag, availableTags}:NoteFormProps) {
                     <Col>
                         <Form.Group controlId='title'>
                             <Form.Label>Title</Form.Label>
-                            <Form.Control  ref={titleRef} required/>
+                            <Form.Control  ref={titleRef} defaultValue = {title} required/>
                         </Form.Group>
                     </Col>
                     <Col>
@@ -73,7 +76,7 @@ export function NoteForm({onSubmit, onAddTag, availableTags}:NoteFormProps) {
                     <Col>
                         <Form.Group  controlId='markdown'>
                             <Form.Label>Body</Form.Label>
-                            <Form.Control  ref={bodyMarkdownRef} required as="textarea" rows={15}/>
+                            <Form.Control  ref={bodyMarkdownRef} required as="textarea" rows={15} defaultValue={body}/>
                         </Form.Group>
                     </Col>
                     <Stack className="justify-content-end" direction="horizontal" gap={2}>
