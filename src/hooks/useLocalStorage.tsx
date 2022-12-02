@@ -4,8 +4,6 @@ import { updateUserNotes } from "../firebase";
 
 export function useLocalStorage<T>(key:string,
     initialValue: T | (()=>T)) { //can pass it a value or a function that returns a value
-    console.error("Did it run?")
-    console.log(initialValue)
     const [value, setValue] = useState<T>(() => { 
         //check if something is already in storage
         const jsonValue = localStorage.getItem(key);
@@ -25,7 +23,7 @@ export function useLocalStorage<T>(key:string,
         localStorage.setItem(key, JSON.stringify(value));
         const user = getAuth();
         if(user.currentUser) {
-            updateUserNotes(user.currentUser.uid, key, JSON.stringify(value))
+            updateUserNotes(user.currentUser.uid, key, value)
         }
     }, [value, key])
 

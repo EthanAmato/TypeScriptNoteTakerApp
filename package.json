@@ -2,7 +2,6 @@
   "name": "notetaker",
   "private": true,
   "version": "0.0.0",
-  "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
@@ -10,6 +9,7 @@
   },
   "dependencies": {
     "bootstrap": "^5.2.3",
+    "dotenv": "^16.0.3",
     "react": "^18.2.0",
     "react-bootstrap": "^2.6.0",
     "react-dom": "^18.2.0",

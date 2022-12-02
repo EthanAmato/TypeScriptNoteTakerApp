@@ -48,30 +48,32 @@ function App() {
   const [notes, setNotes] = useLocalStorage<RawNote[]>("NOTES", [])
   const [tags, setTags] = useLocalStorage<Tag[]>("TAGS", [])
 
-  const auth = getAuth();
-  onAuthStateChanged(auth, async (user) => {
-    if (user) {
-      const userData = await getUserNotes(user.uid);
-      console.log({ ...userData.userNotes, id: userData.userNotes.id, tagIds: tags.map(tag => tag.id) })
-      // setNotes(() => {
-      //   //set notes to all prev notes with an additional note that consists of:
-      //   //1. data, which consists of the note Title and note Body
-      //   //2. A string-based, unique ID
-      //   //3. tagIds, an array of Ids associated with user-assigned tags. This method of storage allows for
-      //   //easier post-hoc relabeling and deletion propagation
-      //   return [
-      //     ...prevNotes,
-      //     { ...data, id: uuidV4(), tagIds: tags.map(tag => tag.id) } //uuidV4() lets us create a string-based id that is always unique
-      //   ]
-      // }) 
-      // setTags(userData.userTags);
-    } else {
-      // () => {
-      //   useLocalStorage<RawNote[]>("NOTES", [])
-      //   useLocalStorage<Tag[]>("TAGS", [])
-      // }
-    }
-  });
+  useEffect(() => {
+    const auth = getAuth();
+    onAuthStateChanged(auth, async (user) => {    
+      if (user) {
+        const userData = await getUserNotes(user?.uid);
+        setNotes((prevNotes) => {
+          return userData.userNotes
+        }) 
+        // setTags(userData.userTags);
+        setTags((prevNotes) => {
+          return userData.userTags
+        })
+        
+      } else {
+        setNotes(() => {
+          return []
+        }) 
+        // setTags(userData.userTags);
+        setTags(() => {
+          return []
+        })
+      }
+      
+    });
+  },[])
+  
 
   const notesWithTags = useMemo(() => {
     return notes.map(note => { //loop through all my notes
@@ -87,7 +89,10 @@ function App() {
       //2. A string-based, unique ID
       //3. tagIds, an array of Ids associated with user-assigned tags. This method of storage allows for
       //easier post-hoc relabeling and deletion propagation
-
+      console.log([
+        ...prevNotes,
+        { ...data, id: uuidV4(), tagIds: tags.map(tag => tag.id) } //uuidV4() lets us create a string-based id that is always unique
+      ])
       return [
         ...prevNotes,
         { ...data, id: uuidV4(), tagIds: tags.map(tag => tag.id) } //uuidV4() lets us create a string-based id that is always unique

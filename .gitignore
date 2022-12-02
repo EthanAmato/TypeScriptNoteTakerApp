@@ -24,4 +24,6 @@ dist-ssr
 *.sw?
 
 #Firebase (for now bc it has sensitive data)
-/src/firebase.tsx
+/secrets.tsx
+
+.env
