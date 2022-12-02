@@ -34,7 +34,7 @@ export function Register() {
                                 <Col lg={8}>
                                     <Form.Group controlId="name">
                                         <Form.Label>Name</Form.Label>
-                                        <Form.Control type="text"
+                                        <Form.Control required type="text"
                                             value={name}
                                             onChange={e => setName(e.target.value)}
                                         />
@@ -45,7 +45,7 @@ export function Register() {
                                 <Col lg={8}>
                                     <Form.Group controlId="email">
                                         <Form.Label>Email</Form.Label>
-                                        <Form.Control type="email"
+                                        <Form.Control required type="email"
                                             value={email}
                                             onChange={e => setEmail(e.target.value)}
                                         />
@@ -58,18 +58,31 @@ export function Register() {
                                         <Form.Label>
                                             Password
                                         </Form.Label>
-                                        <Form.Control type="password"
+                                        <Form.Control required type="password"
                                             value={password}
                                             onChange={e => setPassword(e.target.value)}
                                         />
                                     </Form.Group>
                                 </Col>
                             </Row>
-                            <Row className="justify-content-center">
+                            <Row className="justify-content-center mt-4">
+                                <Col lg={8} className="d-flex justify-content-center ">
+                                    <Button className="h-100 google" 
+                                            variant="outline-dark"
+                                            type="button"
+                                            onClick={signInWithGoogle}>
+                                        <img    width="20px" 
+                                                style={{marginBottom:"3px", marginRight:"5px"}}
+                                                alt="Google Sign-in"
+                                                src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/512px-Google_%22G%22_Logo.svg.png"
+                                        />Register with Google</Button>
+                                </Col>
+                            </Row>
+                            <Row className="justify-content-center mt-4">
                                 <Col xs={"auto"} className="flex-column">
                                     <Button onClick={register}
                                         className="my-4"
-                                        type="submit">Register</Button>
+                                        type="button">Register</Button>
                                 </Col>
                                 <Col xs={"auto"} className="flex-column">
                                     <Stack>
@@ -78,21 +91,6 @@ export function Register() {
                                             type="button"
                                             variant={"outline-primary"}>Go to Login</Button>
                                     </Stack>
-                                </Col>
-                            </Row>
-                            <Row>
-                                <Col className="d-flex justify-content-center"><h3>OR</h3></Col>
-                            </Row>
-                            <Row className="justify-content-center">
-                                <Col lg={8} className="d-flex justify-content-center ">
-                                    <Button className="h-100 google" 
-                                            variant="outline-dark"
-                                            onClick={signInWithGoogle}>
-                                        <img    width="20px" 
-                                                style={{marginBottom:"3px", marginRight:"5px"}}
-                                                alt="Google Sign-in"
-                                                src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/512px-Google_%22G%22_Logo.svg.png"
-                                        />Register with Google</Button>
                                 </Col>
                             </Row>
                         </Stack>

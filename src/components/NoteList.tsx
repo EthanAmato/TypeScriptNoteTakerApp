@@ -1,14 +1,16 @@
 import { useMemo, useState } from "react";
 import { Badge, Button, Card, Col, Form, Modal, Row, Stack } from "react-bootstrap"
+import { useAuthState } from "react-firebase-hooks/auth";
 import { Link } from "react-router-dom"
 import ReactSelect from "react-select"
 import { Note, Tag } from "../App";
 import styles from '../assets/styles/NoteList.module.css';
+import { auth } from "../firebase";
 type NoteListProps = {
     availableTags: Tag[]
     notes: Note[]
-    deleteTag: (id:string) => void
-    updateTag: (id:string, label:string) => void
+    deleteTag: (id: string) => void
+    updateTag: (id: string, label: string) => void
 }
 
 type SimplifiedNote = {
@@ -21,14 +23,16 @@ type EditTagsModalProps = {
     availableTags: Tag[]
     show: boolean
     handleClose: () => void
-    deleteTag: (id:string) => void
-    updateTag: (id:string, label:string) => void
+    deleteTag: (id: string) => void
+    updateTag: (id: string, label: string) => void
 }
 
+ 
 export function NoteList({ availableTags, notes, deleteTag, updateTag }: NoteListProps) {
 
     const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
     const [title, setTitle] = useState("");
+    const [user, loading, error] = useAuthState(auth);
     const [editTagsModalIsOpen, setEditTagsModalIsOpen] = useState(false);
 
     const filteredNotes = useMemo(() => {
@@ -49,13 +53,10 @@ export function NoteList({ availableTags, notes, deleteTag, updateTag }: NoteLis
     return (
         <>
             <Row className="align-items-center mb-4">
-                <Col><h1>Notes</h1></Col>
+                <Col>{user ? <h1>{`${user.displayName?.split(" ")[0]}'s Notes`}</h1> : <h1>Notes</h1>}   </Col>
                 {/* xs (extra small) - push everything to right hand side by letting Notes column take up rest of space*/}
                 <Col xs="auto">
                     <Stack gap={2} direction="horizontal">
-                        <Link to="/login">
-                            <Button variant="primary">Login</Button>
-                        </Link>
                         <Link to="/new">
                             <Button variant="primary">Create</Button>
                         </Link>
@@ -106,18 +107,18 @@ export function NoteList({ availableTags, notes, deleteTag, updateTag }: NoteLis
                     )
                 })}
             </Row>
-            <EditTagsModal 
-                    show = {editTagsModalIsOpen} 
-                    handleClose={() => setEditTagsModalIsOpen(false)} 
-                    availableTags={availableTags}
-                    updateTag ={updateTag}
-                    deleteTag ={deleteTag}
+            <EditTagsModal
+                show={editTagsModalIsOpen}
+                handleClose={() => setEditTagsModalIsOpen(false)}
+                availableTags={availableTags}
+                updateTag={updateTag}
+                deleteTag={deleteTag}
             />
         </>
     )
 }
 
-function NoteCard({ id, title, tags}: SimplifiedNote) {
+function NoteCard({ id, title, tags }: SimplifiedNote) {
     return (
         //h-100 - fill full height
         //text-reset - reset color of text back to default color (instead of ugly <a></a> blue)
@@ -142,7 +143,7 @@ function NoteCard({ id, title, tags}: SimplifiedNote) {
     )
 }
 
-function EditTagsModal({availableTags, handleClose, show, updateTag, deleteTag }: EditTagsModalProps) {
+function EditTagsModal({ availableTags, handleClose, show, updateTag, deleteTag }: EditTagsModalProps) {
     return (<Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
             <Modal.Title>Edit Tags</Modal.Title>
@@ -151,19 +152,19 @@ function EditTagsModal({availableTags, handleClose, show, updateTag, deleteTag }
             <Form>
                 <Stack gap={2}>
                     {availableTags.map(tag => {
-                        return(
+                        return (
                             <Row key={tag.id}>
                                 <Col>
-                                    <Form.Control 
-                                        type="text" 
+                                    <Form.Control
+                                        type="text"
                                         value={tag.label}
-                                        onChange={(e)=>updateTag(tag.id,e.target.value)}
+                                        onChange={(e) => updateTag(tag.id, e.target.value)}
                                     />
                                 </Col>
                                 <Col xs="auto">
-                                    <Button 
+                                    <Button
                                         variant="outline-danger"
-                                        onClick = {() => deleteTag(tag.id)}>
+                                        onClick={() => deleteTag(tag.id)}>
                                         &times;
                                     </Button>
                                 </Col>

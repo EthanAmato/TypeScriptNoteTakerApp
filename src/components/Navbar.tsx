@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Container, Nav, Navbar as BootstrapNavbar, NavDropdown } from "react-bootstrap";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { Link, useNavigate } from 'react-router-dom';
-import { auth, logout } from "../firebase";
+import { getUserNotes, auth, logout } from "../firebase";
 
 
 export function Navbar() {
@@ -16,7 +16,6 @@ export function Navbar() {
             setLoginButton(<Nav.Link onClick={() => logout()}>Logout</Nav.Link>)
         }
 
-        console.log(user)
     }, [user])
 
 
